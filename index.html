@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dorian Yates Training Dashboard PWA</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Custom Variables for Modern Aesthetic --- */
+        :root {
+            --bg-color: #1a1a2e; /* Deep dark background */
+            --card-bg: rgba(30, 30, 50, 0.6); /* Semi-transparent dark glass */
+            --primary-accent: #ff4c70; /* Vibrant Neon Pink/Coral */
+            --secondary-accent: #ff8a6d; /* Lighter Coral */
+            --text-color: #e0e0ff; /* Light off-white/blue */
+            --text-secondary: #a0a0c0;
+            --border-color: rgba(255, 76, 112, 0.3); /* Subtle glow border */
+            --shadow-glow: 0 0 15px rgba(255, 76, 112, 0.4);
+        }
+
+        /* --- Base Styles & Typography --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Start content from the top */
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35); /* Deep, modern shadow */
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid var(--border-color); /* Subtle glowing border */
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: var(--primary-accent);
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* --- Input Group Styling --- */
+        .input-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2); /* Slightly darker input area */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            font-size: 17px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Focus Glow Effect */
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 10px var(--shadow-glow);
+        }
+
+        /* --- Button Styling (Neon Gradient) --- */
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary-accent) 0%, var(--secondary-accent) 100%);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(255, 76, 112, 0.5); /* Button lift shadow */
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #ff6b81 0%, var(--secondary-accent) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 76, 112, 0.8);
+        }
+
+        /* --- Results Section Styling --- */
+        #results {
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--primary-accent);
+            background: rgba(0, 0, 0, 0.4); /* Darker background for results contrast */
+            box-shadow: inset 0 0 10px rgba(255, 76, 112, 0.2); /* Subtle inner glow */
+        }
+
+        #results h2 {
+            color: var(--primary-accent);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid var(--primary-accent);
+            padding-bottom: 10px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-item:hover {
+            background-color: rgba(255, 76, 112, 0.1);
+        }
+
+        .result-label {
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: #66ffc4; /* A contrasting vibrant green/cyan for values */
+            font-size: 1.1em;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 700px) {
+            .container {
+                padding: 25px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Dorian Yates Training Calculator</h1>
+
+        <div class="input-group">
+            <label for="targetWeight">1. Cél Súly (kg):</label>
+            <input type="number" id="targetWeight" placeholder="Írja be a cél súlyát" min="1" step="0.1">
+        </div>
+
+        <button onclick="calculateWeights()">Súlyszámítás Elindítása</button>
+
+        <div id="results">
+            <h2>Számított Súlyok</h2>
+            
+            <div class="result-item">
+                <span class="result-label">1. Bemelegítő Sett (35% súly):</span>
+                <span id="warmup1Output" class="result-value">0</span> kg
+            </div>
+
+            <div class="result-item">
+                <span class="result-label">2. Bemelegítő Sett (75% súly):</span>
+                <span id="warmup2Output" class="result-value">0</span> kg
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Munkasorozat (100% súly):</span>
+                <span id="workingOutput" class="result-value">0</span> kg
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Levezető Sorozat (93% súly):</span>
+                <span id="dropSetOutput" class="result-value">0</span> kg
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateWeights() {
+            // 1. Inputok lekérdezése
+            const targetWeightInput = document.getElementById('targetWeight').value;
+
+            const targetWeight = parseFloat(targetWeightInput);
+
+            // Értékesítés ellenőrzése
+            if (isNaN(targetWeight) || targetWeight <= 0) {
+                alert("Kérjük, írja be egy érvényes, pozitív súlyt.");
+                return;
+            }
+
+            // 2. Számítási logika
+            
+            // Fix súlyszámítások
+            const percentageWarmup1 = 0.35; // 35%
+            const percentageWarmup2 = 0.75; // 75%
+            const percentageWorking = 1.00; // 100%
+            const percentageDropSet = 0.93; // 93%
+
+            // Számítások
+            const warmup1Float = targetWeight * percentageWarmup1;
+            const warmup2Float = targetWeight * percentageWarmup2;
+            const workingFloat = targetWeight * percentageWorking;
+            const dropSetFloat = targetWeight * percentageDropSet;
+
+            // Kerekítés (Math.ceil())
+            const warmup1Rounded = Math.ceil(warmup1Float);
+            const warmup2Rounded = Math.ceil(warmup2Float);
+            const workingRounded = Math.ceil(workingFloat);
+            const dropSetRounded = Math.ceil(dropSetFloat);
+
+
+            // 3. Eredmények megjelenítése (Egész számok)
+            document.getElementById('warmup1Output').textContent = warmup1Rounded;
+            document.getElementById('warmup2Output').textContent = warmup2Rounded;
+            document.getElementById('workingOutput').textContent = workingRounded;
+            document.getElementById('dropSetOutput').textContent = dropSetRounded;
+        }
+    </script>
+
+    <!-- Service Worker Registration Script -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>
